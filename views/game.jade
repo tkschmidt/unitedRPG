@@ -1,0 +1,389 @@
+div.container
+  div.content
+    div.page-header
+      h1#fehlerhin Irgendein guter Text 
+        small Welcome to game #{title}
+      
+
+
+
+  .navbar.navbar-fixed-top
+      .navbar-inner
+          .container
+            button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            .nav-collapse.collapse
+              ul.nav
+                li
+                  a(href='/') Spieleauswahl
+                li.divider-vertical
+                li
+                  a(href='#hero') Mein Held
+                li
+                  a(href='#hero_table') Heldentabelle
+                li 
+                  a(href='#dice') Würfel
+                li
+                  a(href='#dice_table') Würfeltabelle
+
+
+  section#hero
+    .page-header
+      h1
+        | Mein Held 
+        small und was er kann
+    form.well.form-inline#werte_form
+      input.input-small#hero_name(type='text', placeholder='Name', name='hero_name')
+      input.input-small#hero_mut(type='text', placeholder='Mut',name='hero_mut')
+      input.input-small#hero_klugheit(type='text', placeholder='Klugheit',name='hero_klugheit')
+      input.input-small#hero_intuition(type='text', placeholder='Intuition',name='hero_intuition')
+      input.input-small#hero_charisma(type='text', placeholder='Charisma',name='hero_charisma')
+      input.input-small#hero_korperkraft(type='text', placeholder='Koerperkraft', name='hero_korperkraft')
+      input.input-small#hero_konstitution(type='text', placeholder='Konstitution',name='hero_konstitution')
+      input.input-small#hero_gewandheit(type='text', placeholder='Gewandheit',name='hero_gewandheit')
+      input.input-small#hero_fingerfertigkeit(type='text', placeholder='Fingerfertigkeit',name='hero_fingerfertigkeit')
+ 
+  section#hero_table
+    .page-header
+      h1
+        | Heldentabelle 
+        small Hier sind alle übermittelten Helden
+    table.table.table-striped#hero_collection
+      thead
+        tr
+          th Spielfigur
+          th Mut
+          th Klugheit
+          th Intuition
+          th Charisma
+          th Koerperkraft
+          th Konstitution
+          th Gewandheit
+          th Fingerfertigkeit
+
+      tbody
+        tr
+          td Alrik
+          td 10
+          td 10
+          td 10
+          td 10
+          td 10
+          td 10
+          td 10
+          td 10
+
+
+  section#dice
+    .page-header
+      h1
+        | Würfel 
+        small lasst Phex entscheiden
+    form.well.form-inline#dice_form
+      input.input-small#skill_phex(type='text', placeholder='Skill',name='skill_phex')
+      input.input-small#value_phex(type='text', placeholder='Wert',name='value_phex')
+      input.input-small#difficulty_phex(type='text', placeholder='Erschwernis',name='difficulty_phex')
+      select.input-medium#select_att1
+        option Mut
+        option Korperkraft
+        option Klugheit
+        option Intuition
+        option Konstitution
+        option Gewandheit
+        option Fingerfertigkeit
+        option Charisma
+      select.input-medium#select_att2
+        option Mut
+        option Korperkraft
+        option Klugheit
+        option Intuition
+        option Konstitution
+        option Gewandheit
+        option Fingerfertigkeit
+        option Charisma
+      select.input-medium#select_att3
+        option Mut
+        option Korperkraft
+        option Klugheit
+        option Intuition
+        option Konstitution
+        option Gewandheit
+        option Fingerfertigkeit
+        option Charisma                
+      button.btn#phexsend(type='button') lass Phex entscheiden
+
+
+  section#dice_table
+    .page-header
+      h1
+        | dice table 
+        small Hier erscheinen eure Heldentaten
+    table.table.table-striped#dice_collection
+      thead
+        tr
+          th Spielfigur
+          th Fähigkeitsname
+          th Fähigkeitswert
+          th Erschwernis
+          th Eigenschaft
+          th Wert
+          th Eigenschaft
+          th Wert
+          th Eigenschaft
+          th Wert
+          th Erfolg
+      tbody
+        tr
+          td Alrik
+          td Klettern
+          td 1
+          td 0
+          td Konstitution
+          td 1
+          td Intuition
+          td 3
+          td Kraft
+          td 2
+          td Ja
+
+  script(type='text/javascript')
+    var home = location.protocol + '//' + location.host;
+    var socket = io.connect(home);
+    var room = '#{title}';
+    var game_name;
+    var hero_stats;
+
+
+
+    // listener, whenever the server emits 'update_dice_table', this updates the chat body
+    socket.on('update_dice_table', function(json_table_dice){
+      var txt ='<tr>';
+      for (var key in json_table_dice) 
+        {
+          if (json_table_dice.hasOwnProperty(key))
+            {
+              txt += '<td>'+json_table_dice[key]+'</td>';
+                            }
+        }
+      txt += '</tr>';
+      $('#dice_collection').append(txt);
+      });
+
+    socket.on('update_hero_table', function(json_hero){
+      var txt ='<tr>';
+      for (var key in json_hero) 
+        {
+          if (json_hero.hasOwnProperty(key))
+            {
+              txt += '<td>'+json_hero[key]+'</td>';
+                            }
+        }
+      txt += '</tr>';
+      $('#hero_collection').append(txt);
+      });
+
+    // on load of page
+    $(function(){
+
+    // validate signup form on keyup and submit
+    var validator_werte = $('#werte_form').validate({
+      rules: {
+        hero_name: {
+          required : true,
+          minlength: 3
+            },
+        hero_mut:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_konstitution:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_klugheit:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_charisma:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_korperkraft:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_fingerfertigkeit:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_gewandheit:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        },
+        hero_intuition:{
+          required: true,
+          digits: true,
+          range: [1, 20]
+
+        }
+      },
+      messages: { 
+        hero_name: {
+          required : "Ohne Name gehts nicht weiter",
+          minlength: "ein so kurzer Name?"
+            },
+        hero_mut:{
+          required: "Ohne Mut gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_konstitution:{
+          required: "Ohne Konstitution gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_klugheit:{
+          required: "Ohne Klugheit gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_charisma:{
+          required: "Ohne Charisma gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_korperkraft:{
+          required: "ohne Korperkraft gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_fingerfertigkeit:{
+          required: "Ohne Fingerfertigkeit gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_gewandheit:{
+          required: "Ohne Gewandheit gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        },
+        hero_intuition:{
+          required: "Ohne Intuition gehts nicht weiter",
+          digits: "es muss eine Zahl sein",
+          range: "es muss eine Zahl zwischen 1 und 20 sein"
+
+        }
+          }
+    
+    });
+
+
+
+    var validator_dice = $('#dice_form').validate({
+      rules: {
+        skill_phex: {
+        required: true,
+        minlength: 3
+        },
+        value_phex: {
+        required: true,
+        digits: true,
+        range: [0, 20]
+
+        },
+        difficulty_phex: {
+        required: true,
+        digits: true,
+        range: [0, 20]
+
+        }
+
+        },
+      messages: {
+        skill_phex: {
+        required: "hier muss schon was stehen",
+        minlength: "Fertigkeiten haben langere Namen"
+        },
+        value_phex: {
+        required: "Ohne gehts nicht",
+        digits: "Es muss eine Zahl sein",
+        range: "realistische Werte bitte"
+
+        },
+        difficulty_phex: {
+        required: "hier muss was stehen",
+        digits: "Es muss eine Zahl sein",
+        range: "sei ehrlich zu dir"
+
+        }
+    }
+    });
+
+
+
+ 
+
+      console.log(socket.emit('choose_game',room));
+
+
+
+
+      $('#phexsend').click( function() {
+        if ( !validator_werte.form()&& !validator_dice.form()){
+
+          alert('Eine Eingabe war leider nicht valide!');
+
+          }
+        else {
+
+        json_hero = {"hero_name": $('#hero_name').val(),
+        "Mut" :parseInt( $('#hero_mut').val()),
+        "Klugheit" :parseInt( $('#hero_klugheit').val()),
+        "Intuition" :parseInt( $('#hero_intuition').val()),
+         "Charisma" :parseInt( $('#hero_charisma').val()),
+        "Korperkraft" :parseInt( $('#hero_korperkraft').val()),
+        "Konstitution" :parseInt( $('#hero_konstitution').val()),
+        "Gewandheit" :parseInt( $('#hero_konstitution').val()),
+        "Fingerfertigkeit" :parseInt( $('#hero_fingerfertigkeit').val())
+         };
+
+        json_dice = { "skill_phex" : $('#skill_phex').val(),
+        "value_phex" :      parseInt( $('#value_phex').val()),
+        "difficulty_phex" : parseInt( $('#difficulty_phex').val()),
+        "attribute1_phex" : $('#select_att1').val(),
+        "attribute2_phex" : $('#select_att2').val(),
+        "attribute3_phex" : $('#select_att3').val()
+        };
+
+        socket.emit('give_hero_dice',json_hero,json_dice);
+        }
+      });
+
+      });
+
+  div.footer
+    p &copy; tkschmidt 2012
+

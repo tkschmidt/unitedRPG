@@ -1,0 +1,47 @@
+
+
+div.container
+  div.content
+    div.page-header
+      h1 Main Page
+        small Welcome to #{title}
+      
+
+  .hero-unit
+      h1 Hallo Rollenspieler
+        p
+          | Dies soll eine kleine Seite sein um mit Leuten über das Internet DSA zu spielen. Es funktioniert nur mit Javascript und es wird (bis jetzt) keine Datenbank eingesetzt um Daten zwischenzuspeichern
+        p
+          a.btn.btn-primary.btn-large Learn more »
+
+
+
+  .navbar.navbar-fixed-top
+      .navbar-inner
+          .container
+            button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            .nav-collapse.collapse
+              ul.nav
+                li
+                  a(href='/') Wähle dein Spiel
+
+  section#choose_game
+    .page-header
+        h1
+          | Wähle dein Spiel
+          small gib mir den Namen
+
+      form(method='post', action='/').well.form-inline
+        input(type='text', placeholder='Spielname' ,name='game')
+        button.btn(,type='submit') bin dabei
+
+  section#test
+    a.btn.btn-danger(href='#', rel='popover', data-content='And here\'s some amazing content. It\'s very engaging. right?', data-original-title='A Title') hover for popover
+
+
+  div.footer
+    p &copy; tkschmidt 2012
+
